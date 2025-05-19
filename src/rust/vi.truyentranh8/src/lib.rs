@@ -27,7 +27,7 @@ fn cache_manga_page(id: &str) {
 		CACHED_MANGA_ID = Some(String::from(id));
 		CACHED_MANGA = Some(
 			Request::new(
-				format!("http://truyentranh86.com{id}").as_str(),
+				format!("http://truyentuoitho.com{id}").as_str(),
 				HttpMethod::Get,
 			)
 			.data(),
@@ -37,7 +37,7 @@ fn cache_manga_page(id: &str) {
 
 #[get_manga_list]
 fn get_manga_list(filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
-	let mut url = format!("http://truyentranh86.com/search.php?act=timnangcao&page={page}");
+	let mut url = format!("http://truyentuoitho.com/search.php?act=timnangcao&page={page}");
 	let mut included_tags = Vec::new();
 	let mut excluded_tags = Vec::new();
 	for filter in filters {
@@ -150,7 +150,7 @@ fn get_manga_list(filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
 		let manga_node = elem.as_node().expect("node array");
 		let title = manga_node.select("figcaption h3 a").text().read();
 		let url = manga_node.select("figcaption h3 a").attr("href").read();
-		let id = url.replace("http://truyentranh86.com", "");
+		let id = url.replace("http://truyentuoitho.com", "");
 		let cover = append_protocol(manga_node.select("img").attr("src").read());
 		manga.push(Manga {
 			id,
@@ -196,7 +196,7 @@ fn get_manga_details(id: String) -> Result<Manga> {
 		.join(", ");
 	let description =
 		text_with_newlines(html.select("div.card-body.border-start.border-info.border-3"));
-	let url = format!("http://truyentranh86.com{}", id);
+	let url = format!("http://truyentuoitho.com{}", id);
 	let categories = html
 		.select("a[itemprop=genre]")
 		.array()
@@ -222,7 +222,7 @@ fn get_manga_details(id: String) -> Result<Manga> {
 	};
 	let (mut nsfw, viewer) = category_parser(&categories);
 	nsfw = if html
-		.select("a[itemprop=contentRating][href='http://truyentranh86.com/DoTuoi/18/']")
+		.select("a[itemprop=contentRating][href='http://truyentuoitho.com/DoTuoi/18/']")
 		.array()
 		.len() > 0
 	{
@@ -271,7 +271,7 @@ fn get_chapter_list(id: String) -> Result<Vec<Chapter>> {
 	for elem in elems {
 		let chapter_node = elem.as_node().expect("node array");
 		let url = chapter_node.select("a").attr("href").read();
-		let chapter_id = url.replace("http://truyentranh86.com", "");
+		let chapter_id = url.replace("http://truyentuoitho.com", "");
 		let title = chapter_node
 			.select("small.gray-500")
 			.text()
@@ -309,7 +309,7 @@ fn get_chapter_list(id: String) -> Result<Vec<Chapter>> {
 
 #[get_page_list]
 fn get_page_list(_manga_id: String, chapter_id: String) -> Result<Vec<Page>> {
-	let url = format!("http://truyentranh86.com{chapter_id}");
+	let url = format!("http://truyentuoitho.com{chapter_id}");
 	let html = Request::new(&url, HttpMethod::Get).html()?;
 	let node = html.select("div.page-chapter");
 	let elems = node.array();
